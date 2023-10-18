@@ -119,7 +119,7 @@ export class RadixTree {
         );
     }
 
-    getMaskByVLSM(vlsm) {
+    static getMaskByVLSM(vlsm) {
         return vlsm > 0 ? 0x80000000 >> (vlsm - 1): 0;
     }
 

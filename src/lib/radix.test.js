@@ -40,3 +40,17 @@ test('RadixTree print', ()=> {
     tree.display(tree.getRoot(), str, level);    
 })
 
+
+
+test('mask by vlsm', ()=> {
+    let vlsms =  ['8', '16', '24','32'];
+    let expectedMasks = ['255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.255'];
+    for(let i; i < vlsms.length; i++){
+        const vlsm = vlsms[i];
+        const expected = expectedMasks[i];
+        const mask = RadixTree.getMaskByVLSM(vlsm);
+        console.log(mask);
+        console.log(RadixTree.int2ip(mask));
+        expect(mask).toEqual(expected);
+    };
+})
