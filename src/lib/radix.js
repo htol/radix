@@ -99,6 +99,24 @@ export class RadixTree {
         }
     }
 
+    readTree(root, str, level, result) {
+        //console.dir(root);
+        if (root.isEnd()) {
+            for (let k = level; k < str.length; k++) {
+                str[k] = '';
+            }
+            result.push(RadixTree.int2ip(str.join(""))+ "/" + Object.keys(root.prefixes).join(','));
+        }
+        for (let i = 0; i < 10; i++) {
+            //console.log(i.toString() in root.childs);
+            if (i.toString() in root.childs) {
+                str[level] = i.toString();
+                this.readTree(root.childs[i.toString()], str, level + 1, result);
+            }
+        }
+        //return result
+    }
+
     static ip2int(ip) {
         return (
             ip.split(".").reduce(function (ipInt, octet) {
