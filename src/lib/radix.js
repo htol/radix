@@ -1,7 +1,10 @@
+import { l } from "./debug_helper";
+
 class Node {
     constructor() {
         this.childs = {};
         this.end = false;
+        this.network = null;
         this.prefixes = {};
     }
 
@@ -31,6 +34,10 @@ class Node {
     putPrefix(prefix){
         this.prefixes[prefix]=true;
     }
+
+    setNetwork(network){
+        this.network = network;
+    }
 }
 
 export class RadixTree {
@@ -54,6 +61,7 @@ export class RadixTree {
             current = current.getNode(key);
         }
         current.putPrefix(prefix);
+        current.setNetwork(ip);
         current.setEnd();
     }
 
@@ -76,7 +84,7 @@ export class RadixTree {
     search(cidr) {
         const [ip, prefix] = cidr.split("/");
         const decimalIp = RadixTree.ip2int(ip).toString();
-        console.log('search: ', ip, decimalIp, prefix);
+        l('search: ', ip, decimalIp, prefix);
         let node = this.searchHelper(decimalIp);
         return node != null && node.isEnd() && node.hasPrefix(prefix);
     }
@@ -84,14 +92,14 @@ export class RadixTree {
     display(root, str, level) {
         //console.dir(root);
         if (root.isEnd()) {
-            //console.log('root is end!');
+            //l('root is end!');
             for (let k = level; k < str.length; k++) {
                 str[k] = '';
             }
-            console.log(RadixTree.int2ip(str.join("")), Object.keys(root.prefixes));
+            l(RadixTree.int2ip(str.join("")), Object.keys(root.prefixes));
         }
         for (let i = 0; i < 10; i++) {
-            //console.log(i.toString() in root.childs);
+            //l(i.toString() in root.childs);
             if (i.toString() in root.childs) {
                 str[level] = i.toString();
                 this.display(root.childs[i.toString()], str, level + 1);
@@ -108,7 +116,7 @@ export class RadixTree {
             result.push(RadixTree.int2ip(str.join(""))+ "/" + Object.keys(root.prefixes).join(','));
         }
         for (let i = 0; i < 10; i++) {
-            //console.log(i.toString() in root.childs);
+            //l(i.toString() in root.childs);
             if (i.toString() in root.childs) {
                 str[level] = i.toString();
                 this.readTree(root.childs[i.toString()], str, level + 1, result);
@@ -117,11 +125,33 @@ export class RadixTree {
         //return result
     }
 
+    display2(node, depth) {
+        if(node === null) return;
+
+       const prefix = "  ".repeat(depth);
+        if(node.isEnd()){
+            l(prefix +node.network+'/'+ Math.min.apply(null, Object.keys(node.prefixes)))
+            Object.keys(node.prefixes).sort().forEach((key) =>{
+                depth++;
+                l("  ".repeat(depth) + prefix + "/" + key);
+            })
+            depth=depth+1;
+        }
+        Object.keys(node.childs).forEach((key) => {
+            const childNode = node.childs[key];
+            this.display2(childNode, depth);
+        });
+    }
+
+    dsp2(){
+        this.display2(this.root, 0);
+    }
+
     static ip2int(ip) {
         return (
             ip.split(".").reduce(function (ipInt, octet) {
                 return (ipInt << 8) + parseInt(octet, 10);
-            }, 0) >>> 0
+            }, 0)
         );
     }
 
@@ -137,8 +167,17 @@ export class RadixTree {
         );
     }
 
-    static getMaskByVLSM(vlsm) {
-        return vlsm > 0 ? 0x80000000 >> (vlsm - 1): 0;
+    static createMask(maskLength) {
+        return maskLength > 0 ? 0x80000000 >> (maskLength - 1): 0;
+    }
+
+    static isSubnet(net, maskLenght, subnet){
+        const mask =  RadixTree.createMask(maskLenght);
+        l(mask, this.int2ip(mask));
+        const netMasked = net & mask;
+        const subnetMasked = subnet &mask;
+        l(net, netMasked, this.int2ip(net), this.int2ip(netMasked));
+        return net === subnetMasked?true:false;
     }
 
     //ipv6ToInt(ipv6) {
