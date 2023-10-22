@@ -3,7 +3,7 @@ import NetworksList from "./components/NetworksList.vue";
 </script>
 
 <template>
-  <NetworksList />
+    <NetworksList />
 </template>
 
 <style scoped></style>
