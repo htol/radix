@@ -1,2 +1,3 @@
 export function l() {
-    console.log.apply(console, arguments);}
+  console.log.apply(console, arguments);
+}

@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
             ? resolve(__dirname, "src/environments/environment.prod")
             : resolve(__dirname, "src/environments/environment"),
       },
-        test:{},
+      test: {},
     },
   };
 });
