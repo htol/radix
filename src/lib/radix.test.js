@@ -45,29 +45,6 @@ test("RadixTree print", () => {
   tree.displayHelper(tree.getRoot(), 0, stack);
 });
 
-test("display", () => {
-  const prefixes = [
-    "1.1.1.1/32",
-    "4.4.4.4/32",
-    "8.8.8.8/32",
-    "10.0.0.0/16",
-    "10.0.1.0/24",
-    "10.0.2.0/24",
-    "10.0.1.0/25",
-    "10.0.1.32/30",
-    "127.0.0.0/32",
-    "127.0.0.0/24",
-    "127.0.0.1/32",
-    "127.0.0.1/24",
-    "255.255.255.255/24",
-  ];
-  let tree = new RadixTree();
-  prefixes.forEach((prefix) => {
-    tree.insert(prefix);
-  });
-
-  tree.display();
-});
 
 test("mask by vlsm", () => {
   let vlsms = ["8", "16", "24", "32"];
@@ -101,4 +78,29 @@ test("is subnet", () => {
     RadixTree.ip2int("192.168.24.64"),
   );
   expect(result2).toEqual(false);
+});
+
+
+test("display", () => {
+  const prefixes = [
+    "1.1.1.1/32",
+    "4.4.4.4/32",
+    "8.8.8.8/32",
+    "10.0.0.0/16",
+    "10.0.1.0/24",
+    "10.0.2.0/24",
+    "10.0.1.0/25",
+    "10.0.1.32/30",
+    "127.0.0.0/32",
+    "127.0.0.0/24",
+    "127.0.0.1/32",
+    "127.0.0.1/24",
+    "255.255.255.255/24",
+  ];
+  let tree = new RadixTree();
+  prefixes.forEach((prefix) => {
+    tree.insert(prefix);
+  });
+
+  tree.display();
 });
