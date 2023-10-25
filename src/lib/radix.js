@@ -125,8 +125,24 @@ export class RadixTree {
         .forEach((key) => {
           depth++;
           l("  ".repeat(depth) + prefix + node.network + "/" + key);
-          l("stack: ", prevPrefixes);
-          prevPrefixes.push({ subnet: node.network, prefix: key });
+          let prevSize = prevPrefixes.length - 1;
+          l(prevSize);
+          l(prevPrefixes[prevSize]);
+          if (
+            prevSize >= 0 &&
+            RadixTree.isSubnet(
+              RadixTree.ip2int(prevPrefixes[prevSize].subnet),
+              prevPrefixes[prevSize].prefix,
+              RadixTree.ip2int(node.network),
+            )
+          ) {
+            l("=== subnet! ===");
+          }
+          prevPrefixes.push({
+            subnet: node.network,
+            prefix: key,
+            depth: depth,
+          });
         });
       depth = depth + 1;
     }
@@ -139,6 +155,7 @@ export class RadixTree {
   display() {
     let stack = [];
     this.displayHelper(this.root, 0, stack);
+    l("stack: ", stack);
   }
 
   static ip2int(ip) {
@@ -164,11 +181,12 @@ export class RadixTree {
   }
 
   static isSubnet(net, maskLenght, subnet) {
+    if (!net) return false;
     const mask = RadixTree.createMask(maskLenght);
-    l(mask, this.int2ip(mask));
-    const netMasked = net & mask;
+    //l(mask, this.int2ip(mask));
+    //const netMasked = net & mask;
     const subnetMasked = subnet & mask;
-    l(net, netMasked, this.int2ip(net), this.int2ip(netMasked));
+    //l(net, netMasked, this.int2ip(net), this.int2ip(netMasked));
     return net === subnetMasked ? true : false;
   }
 
