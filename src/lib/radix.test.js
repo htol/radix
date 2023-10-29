@@ -1,3 +1,4 @@
+import { l } from "./debug_helper";
 import { expect, test } from "vitest";
 import { RadixTree } from "./radix.js";
 
@@ -22,7 +23,7 @@ test("insert and search 127.0.0.1/32 && 127.0.0.1/24", () => {
   expect(tree.search(ip3)).toEqual(true);
   expect(tree.search(ip4)).toEqual(true);
   expect(tree.search("127.0.0.2/32")).toEqual(false);
-  //console.dir(tree, {depth: null});
+  //l(tree, {depth: null});
 });
 
 test("RadixTree print", () => {
@@ -45,21 +46,21 @@ test("RadixTree print", () => {
   tree.displayHelper(tree.getRoot(), 0, stack);
 });
 
-
 test("mask by vlsm", () => {
-  let vlsms = ["8", "16", "24", "32"];
+  let vlsms = ["8", "16", "24", "28", "32"];
   let expectedMasks = [
     "255.0.0.0",
     "255.255.0.0",
     "255.255.255.0",
+    "255.255.255.248",
     "255.255.255.255",
   ];
   for (let i; i < vlsms.length; i++) {
     const vlsm = vlsms[i];
     const expected = expectedMasks[i];
     const mask = RadixTree.createMask(vlsm);
-    console.log(mask);
-    console.log(RadixTree.int2ip(mask));
+    l(mask);
+    l(RadixTree.int2ip(mask));
     expect(mask).toEqual(expected);
   }
 });
@@ -80,6 +81,21 @@ test("is subnet", () => {
   expect(result2).toEqual(false);
 });
 
+test("net from ip", () => {
+  let expected = [
+    "127.0.0.0",
+    "127.0.0.32",
+  ];
+  let input = [];
+  input.push(RadixTree.netFromIP("127.0.0.111/24"));
+  input.push(RadixTree.netFromIP("127.0.0.38/28"));
+  for(let i = 0; i < input.length; i++){
+  const subnet = input[i][0]
+    //l(subnet, prefix);
+    //l(RadixTree.int2ip(subnet), prefix);
+    expect(RadixTree.int2ip(subnet)).toEqual(expected[i]);
+  };
+});
 
 test("display", () => {
   const prefixes = [
@@ -104,3 +120,28 @@ test("display", () => {
 
   tree.display();
 });
+
+test("ttt", () => {
+  const prefixes = [
+    "1.1.1.1/32",
+    "4.4.4.4/32",
+    "8.8.8.8/32",
+    "10.0.0.0/16",
+    "10.0.1.0/24",
+    "10.0.2.0/24",
+    "10.0.1.0/25",
+    "10.0.1.32/30",
+    "127.0.0.0/32",
+    "127.0.0.0/24",
+    "127.0.0.1/32",
+    "127.0.0.1/24",
+    "255.255.255.255/24",
+  ];
+  let tree = new RadixTree();
+  prefixes.forEach((prefix) => {
+    tree.insert(prefix);
+  });
+
+  tree.tt();
+});
+
