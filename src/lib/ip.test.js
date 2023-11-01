@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { createMask, int2ip, ip2int, netFromIP } from "./ip";
+import { createMask, int2ip, ip2int, netFromCIDR } from "./ip";
 import { l } from "./debug_helper";
 
 test("ip2int 127.0.0.1", () => {
@@ -9,9 +9,9 @@ test("ip2int 127.0.0.1", () => {
 test("net from ip", () => {
   let expected = ["127.0.0.0", "127.0.0.32", "127.0.0.32"];
   let input = [];
-  input.push(netFromIP("127.0.0.111/24"));
-  input.push(netFromIP("127.0.0.38/28"));
-  input.push(netFromIP("127.0.0.32/32"));
+  input.push(netFromCIDR("127.0.0.111/24"));
+  input.push(netFromCIDR("127.0.0.38/28"));
+  input.push(netFromCIDR("127.0.0.32/32"));
   for (let i = 0; i < input.length; i++) {
     const [subnet, prefix] = input[i];
     l(subnet, prefix);

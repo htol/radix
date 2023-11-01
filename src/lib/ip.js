@@ -1,7 +1,7 @@
 export class IPNet {
-  constructor(ip, mask){
+  constructor(ip, mask) {
     this.ip = ip;
-    this.mask= mask;
+    this.mask = mask;
   }
 }
 
@@ -36,7 +36,7 @@ export function isSubnet(net, maskLenght, subnet) {
   return net === subnetMasked ? true : false;
 }
 
-export function netFromIP(cidr) {
+export function netFromCIDR(cidr) {
   if (!cidr) return null;
 
   const [ip, prefix] = cidr.split("/");
