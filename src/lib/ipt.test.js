@@ -23,6 +23,7 @@ test("toString", () => {
   t.insertNet("127.0.1.130/32");
   t.insertNet("127.0.1.131/32");
   t.insertNet("127.0.1.132/32");
+  t.insertNet("127.0.0.0/16");
   t.insertNet("127.0.1.133/32");
   t.insertNet("127.0.1.134/32");
   t.insertNet("127.0.1.135/32");

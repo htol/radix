@@ -1,5 +1,5 @@
 import { l } from "./debug_helper.js";
-import { int2ip, ip2int, isSubnet, netFromIP } from "./ip";
+import { int2ip, ip2int, isSubnet, netFromCIDR } from "./ip";
 
 class Node {
   constructor(label) {
@@ -50,7 +50,7 @@ export class RadixTree {
   insert(cidr) {
     let current = this.root;
 
-    const [ip, prefix] = netFromIP(cidr);
+    const [ip, prefix] = netFromCIDR(cidr);
     l(cidr, int2ip(ip));
     const decimalIp = ip.toString().padStart(10, "0");
     //l("decimalIP: ", decimalIp);

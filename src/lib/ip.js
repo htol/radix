@@ -39,14 +39,15 @@ export function isSubnet(net, maskLenght, subnet) {
 export function netFromCIDR(cidr) {
   if (!cidr) return null;
 
-  const [ip, prefix] = cidr.split("/");
-  const decimalIp = ip2int(ip);
+  const [p1, p2] = cidr.split("/");
+  const decimalIp = ip2int(p1);
+  const ones = parseInt(p2);
 
-  if (prefix === "32") return [ip2int(ip), prefix];
+  if (ones === 32) return [decimalIp, ones];
 
-  const mask = createMask(prefix);
+  const mask = createMask(ones);
   const subnet = decimalIp & mask;
-  return [subnet, prefix];
+  return [subnet, ones];
 }
 
 //ipv6ToInt(ipv6) {

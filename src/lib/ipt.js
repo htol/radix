@@ -27,6 +27,10 @@ export class Tree {
     this.root = null;
   }
 
+  getRoot() {
+    return this.root;
+  }
+
   insertNet(cidr) {
     const [ip, ones] = netFromCIDR(cidr);
     this.insert(ip, ones, true, null);
@@ -44,20 +48,25 @@ export class Tree {
     let cbits = 0;
 
     while (r != null) {
+      l("enter loop r: ", int2ip(r.key), "/", r.bits);
+      l("enter loop n: ", int2ip(key), "/", bits);
       // common most significant bits (CMSB)
       // first ^ is XOR will clear (set to zero) all common bits
       // ~ is NOT bitwise operator it will reduce number of common bits by mask if nessesary
       cbits = Math.clz32((r.key ^ key) | ~masks32[r.bits] | ~masks32[bits]);
       if (cbits < r.bits) {
         l("cbits<r.bits ");
-        l("r: ", int2ip(r.key),"/", r.bits)
-        l("n: ", int2ip(key),"/",bits)
+        l("r: ", int2ip(r.key), "/", r.bits);
+        l("n: ", int2ip(key), "/", bits);
 
         pBranch = branch;
         // branch select 0/1 for Node.child it based on next bit after last common bit
         branch = (r.Key >> (Key32BitSize - 1 - cbits)) & 1;
 
+        l("cbits/bits: ", cbits, bits);
+        l(typeof cbits, typeof bits);
         if (cbits === bits) {
+          l("cbits === bits");
           // making new root
           middle = new Node(key, bits, true, value);
           //middle.child[branch] = r;
@@ -69,18 +78,20 @@ export class Tree {
         middle.child[branch] = r;
 
         if (!parent) {
-          l("no parent", int2ip(middle.key), middle.bits)
+          l("no parent", int2ip(middle.key), middle.bits);
           this.root = middle;
         } else {
-          l("parent", int2ip(middle.key), middle.bits)
+          l("parent", int2ip(middle.key), middle.bits);
           parent.child[pBranch] = middle;
         }
+
+        l("retrun 1");
         return;
       }
 
       // same node, just rewrite value
       if (bits === r.bits) {
-        l("bits === r.bits", int2ip(key), bits)
+        l("bits === r.bits", int2ip(key), bits);
         r.key = key;
         r.bots = bits;
         r.leaf = leaf;
@@ -100,7 +111,7 @@ export class Tree {
       return;
     }
     parent.child[branch] = node;
-    l("end: ", bits, parent);
+    //l("end: ", bits, parent);
   }
 
   toString() {
@@ -108,16 +119,16 @@ export class Tree {
     let output = "";
 
     function walk(node, indent) {
-      if(node.leaf){
-      output +=
-        "  ".repeat(indent) +
-        int2ip(node.key) +
-        "/" +
-        node.bits +
-        " leaf: " +
-        node.leaf +
-        "\n";
-        indent+=1
+      if (node.leaf) {
+        output +=
+          "  ".repeat(indent) +
+          int2ip(node.key) +
+          "/" +
+          node.bits +
+          " leaf: " +
+          node.leaf +
+          "\n";
+        indent += 1;
       }
       const [c1, c2] = node.child;
       if (c1 != null) {
