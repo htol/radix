@@ -15,10 +15,15 @@ const Key32BitSize = 32;
 class Node {
   constructor(key, bits, leaf, value) {
     this.key = key;
+    this.keys = int2ip(key)
     this.bits = bits;
     this.leaf = leaf;
     this.value = value;
     this.child = [null, null]; //new Array(2).fill(null);
+  }
+
+  toString() {
+      l("Node key: ", int2ip(this.key), "/", this.bits, " is leaf: ", this.leaf);
   }
 }
 
@@ -135,6 +140,35 @@ export class Tree {
         walk(c1, indent);
       }
       if (c2 != null) {
+        walk(c2, indent);
+      }
+    }
+
+    walk(this.root, 0);
+    return output;
+  }
+  
+  layer() {
+    if (!this.root) return;
+    let output = "";
+
+    function walk(node, indent) {
+      if (node.leaf) {
+        output +=
+          "  ".repeat(indent) +
+          int2ip(node.key) +
+          "/" +
+          node.bits +
+          " leaf: " +
+          node.leaf +
+          "\n";
+        indent += 1;
+      }
+      const [c1, c2] = node.child;
+      if (c1 != null && !node.leaf) {
+        walk(c1, indent);
+      }
+      if (c2 != null && !node.leaf) {
         walk(c2, indent);
       }
     }

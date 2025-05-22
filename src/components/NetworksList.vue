@@ -9,8 +9,10 @@ import AnotherTree from "./AnotherTree.vue";
 const nets = [
   "10.0.1.0/24",
   "10.0.2.0/24",
+  "212.1.2.3/24",
   "10.0.2.0/30",
   "10.0.0.0/16",
+  "118.4.5.0/24",
   "127.0.0.122/24",
   "127.0.0.128/32",
   "127.0.1.1/24",
@@ -33,6 +35,7 @@ nets.forEach((net) => {
 });
 l(tree);
 l(tree.toString());
+l(tree.layer());
 
 // make table
 let rows = [];
